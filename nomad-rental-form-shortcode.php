@@ -48,8 +48,8 @@ if (! function_exists('nomad_rental_form_shortcode')) {
         ob_start();
 
         // Shared CSS/JS only once per request.
-        if (! defined('NOMAD_RENTAL_FORM_SHARED_ASSETS')) {
-            define('NOMAD_RENTAL_FORM_SHARED_ASSETS', true);
+        if (! defined('NOMAD_RENTAL_FORM_ASSETS_PRINTED')) {
+            define('NOMAD_RENTAL_FORM_ASSETS_PRINTED', true);
             ?>
             <style id="nomad-rental-form-styles">
                 .nomad-rental-container * {
