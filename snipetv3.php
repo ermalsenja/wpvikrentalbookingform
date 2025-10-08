@@ -212,7 +212,7 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                 }
 
                 .nomad-search-fields.single-location .nomad-pickup-location {
-                    flex: 2.2;
+                    flex: 2;
                 }
 
                 .nomad-search-fields:not(.single-location) .nomad-pickup-location {
@@ -227,10 +227,14 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                     display: flex;
                 }
 
-                .nomad-date-field,
+                .nomad-date-field {
+                    flex: 0.7;
+                    min-width: 120px;
+                }
+
                 .nomad-time-field {
-                    flex: 0 0 160px;
-                    min-width: 150px;
+                    flex: 0.6;
+                    min-width: 110px;
                 }
 
                 .nomad-options-row {
@@ -258,47 +262,98 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                     margin: 0;
                 }
 
-                @media (max-width: 1180px) {
-                    .nomad-pickup-location,
-                    .nomad-dropoff-location {
-                        min-width: 180px;
+                @media (max-width: 1200px) {
+                    .nomad-date-field {
+                        flex: 0 0 140px;
                     }
-                }
 
-                @media (max-width: 1024px) {
-                    .nomad-search-fields {
-                        flex-wrap: wrap;
-                        gap: 4px;
+                    .nomad-time-field {
+                        flex: 0 0 110px;
                     }
 
                     .nomad-pickup-location,
                     .nomad-dropoff-location {
-                        flex: 1 1 100%;
-                        min-height: 60px;
+                        min-width: 150px;
                     }
 
                     .nomad-search-fields.single-location .nomad-pickup-location {
-                        flex: 1 1 100%;
+                        flex: 2;
+                    }
+                }
+
+                @media (max-width: 1020px) {
+                    .nomad-search-fields {
+                        flex-wrap: wrap;
+                        gap: 2px;
                     }
 
-                    .nomad-date-field,
-                    .nomad-time-field {
-                        flex: 1 1 200px;
+                    .nomad-pickup-location {
+                        flex: 1 1 calc(50% - 1px);
+                        min-height: 60px;
+                        order: 1;
+                    }
+
+                    .nomad-dropoff-location {
+                        flex: 1 1 calc(50% - 1px);
+                        min-height: 60px;
+                        order: 2;
+                    }
+
+                    .nomad-dropoff-location.show {
+                        flex: 1 1 calc(50% - 1px);
+                    }
+
+                    .nomad-search-fields.single-location .nomad-pickup-location {
+                        flex: 1 1 100% !important;
+                    }
+
+                    .nomad-search-field[id$="_pickup_date_field"] {
+                        flex: 1 1 calc(50% - 1px);
+                        min-height: 60px;
+                        order: 3;
+                    }
+
+                    .nomad-search-field[id$="_pickup_time_field"] {
+                        flex: 1 1 calc(50% - 1px);
+                        min-height: 60px;
+                        order: 4;
+                    }
+
+                    .nomad-search-field[id$="_dropoff_date_field"] {
+                        flex: 1 1 calc(50% - 1px);
+                        min-height: 60px;
+                        order: 5;
+                    }
+
+                    .nomad-search-field[id$="_dropoff_time_field"] {
+                        flex: 1 1 calc(50% - 1px);
+                        min-height: 60px;
+                        order: 6;
                     }
 
                     .nomad-search-btn {
                         flex: 1 1 100%;
                         min-height: 50px;
+                        order: 7;
                     }
 
                     .nomad-field-trigger {
                         padding: 6px 10px;
                     }
+
+                    .nomad-options-row {
+                        flex-direction: column;
+                        align-items: flex-start;
+                        gap: 12px;
+                        padding: 16px 20px;
+                    }
                 }
 
                 @media (max-width: 680px) {
-                    .nomad-date-field,
-                    .nomad-time-field {
+                    .nomad-search-field[id$="_pickup_date_field"],
+                    .nomad-search-field[id$="_pickup_time_field"],
+                    .nomad-search-field[id$="_dropoff_date_field"],
+                    .nomad-search-field[id$="_dropoff_time_field"] {
                         flex: 1 1 calc(50% - 2px);
                         min-width: 0;
                     }
@@ -311,7 +366,7 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                         font-size: 13px;
                     }
 
-                                  /* Stack Litepicker months vertically on smaller screens and keep within viewport */
+                    /* Stack Litepicker months vertically on smaller screens and keep within viewport */
                     .litepicker {
                         width: calc(100vw - 24px);
                         width: min(100vw - 24px, 420px);
