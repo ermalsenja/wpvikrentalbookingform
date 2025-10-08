@@ -2,6 +2,9 @@
 /**
  * Enhanced shortcode variant with UIkit icons and refined responsive behaviour.
  *
+ * Version 5 tweaks: keep pick-up/drop-off paired on tablet widths but stack them on
+ * narrow mobile breakpoints.
+ *
  * Usage:
  *   [nomad_rental_form_enhanced base_url="https://example.com/search" itemid="613"]
  */
@@ -215,7 +218,8 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                     flex: 2;
                 }
 
-                .nomad-search-fields:not(.single-location) .nomad-pickup-location {
+                .nomad-search-fields:not(.single-location) .nomad-pickup-location,
+                .nomad-search-fields:not(.single-location) .nomad-dropoff-location {
                     flex: 1;
                 }
 
@@ -307,6 +311,12 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                         flex: 1 1 100% !important;
                     }
 
+                    .nomad-search-fields:not(.single-location) .nomad-pickup-location,
+                    .nomad-search-fields:not(.single-location) .nomad-dropoff-location,
+                    .nomad-search-fields:not(.single-location) .nomad-dropoff-location.show {
+                        flex: 1 1 calc(50% - 1px) !important;
+                    }
+
                     .nomad-search-field[id$="_pickup_date_field"] {
                         flex: 1 1 calc(50% - 1px);
                         min-height: 60px;
@@ -350,6 +360,19 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                 }
 
                 @media (max-width: 680px) {
+                    .nomad-pickup-location,
+                    .nomad-dropoff-location,
+                    .nomad-search-fields:not(.single-location) .nomad-pickup-location,
+                    .nomad-search-fields:not(.single-location) .nomad-dropoff-location,
+                    .nomad-search-fields:not(.single-location) .nomad-dropoff-location.show {
+                        flex: 1 1 100% !important;
+                        min-height: 56px;
+                    }
+
+                    .nomad-search-fields.single-location .nomad-pickup-location {
+                        flex: 1 1 100% !important;
+                    }
+
                     .nomad-search-field[id$="_pickup_date_field"],
                     .nomad-search-field[id$="_pickup_time_field"],
                     .nomad-search-field[id$="_dropoff_date_field"],
