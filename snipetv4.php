@@ -215,7 +215,8 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                     flex: 2;
                 }
 
-                .nomad-search-fields:not(.single-location) .nomad-pickup-location {
+                .nomad-search-fields:not(.single-location) .nomad-pickup-location,
+                .nomad-search-fields:not(.single-location) .nomad-dropoff-location {
                     flex: 1;
                 }
 
@@ -305,6 +306,12 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
 
                     .nomad-search-fields.single-location .nomad-pickup-location {
                         flex: 1 1 100% !important;
+                    }
+
+                    .nomad-search-fields:not(.single-location) .nomad-pickup-location,
+                    .nomad-search-fields:not(.single-location) .nomad-dropoff-location,
+                    .nomad-search-fields:not(.single-location) .nomad-dropoff-location.show {
+                        flex: 1 1 calc(50% - 1px) !important;
                     }
 
                     .nomad-search-field[id$="_pickup_date_field"] {
