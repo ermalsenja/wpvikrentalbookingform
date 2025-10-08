@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Car Rental Search - UIkit Version</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- UIkit CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.19.4/dist/css/uikit.min.css" />
+  
+  <!-- Litepicker for date selection -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css">
+  <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js"></script>
+  
+  <!-- UIkit JS -->
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.19.4/dist/js/uikit.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.19.4/dist/js/uikit-icons.min.js"></script>
+  
+  <style>
+    /* Reset and base styles to override UIkit */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "system-ui", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+      background: #1a3c72 !important;
+      padding: 40px 20px;
+      min-height: 100vh;
+      color: rgb(26, 26, 26);
+      font-size: 14px;
+      line-height: 20px;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Main search bar - Exact Booking.com style */
+    .search-bar {
+      background: rgb(255, 183, 0);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: rgba(26, 26, 26, 0.16) 0px 2px 8px 0px;
+      margin-bottom: 16px;
+      display: flex;
+      padding: 3px;
+    }
+
+    .search-fields {
+      display: flex;
+      align-items: stretch;
+      width: 100%;
+      gap: 3px; /* Yellow/orange separator between all elements */
+    }
+
+    /* Every individual field is separated by yellow background */
+    .search-field {
+      background: rgb(255, 255, 255);
+      position: relative;
+      border-radius: 6px;
+      flex: 1;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+      overflow: hidden;
+    }
+
+    .search-field:hover {
+      background: #fafafa;
+    }
+
+    .search-field.search-btn {
+      background: #0073e6;
+      color: white;
+      justify-content: center;
+      align-items: center;
+      display: flex;
+      flex: 0 0 120px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 24px;
+      transition: transform 0.12s cubic-bezier(0.2, 0, 0.4, 0.8);
+      border: none;
+      border-radius: 6px;
+    }
+
+    .search-field.search-btn:hover {
+      background: #006bd6;
+      transform: scale(1.02);
+    }
+
+    /* Field trigger layout - matches Booking.com exactly */
+    .field-trigger {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 5px 10px; /* Custom padding: top/bottom 5px, left/right 10px */
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      cursor: pointer;
+    }
+
+    .field-icon {
+      opacity: 0.7;
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .field-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .field-content {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .field-label {
+      font-size: 12px;
+      color: rgb(89, 89, 89);
+      font-weight: 500;
+      line-height: 18px;
+      margin-bottom: 2px;
+      display: flow-root;
+      overflow: hidden;
+    }
+
+    .field-value {
+      font-size: 14px;
+      color: rgb(26, 26, 26);
+      font-weight: 600;
+      line-height: 20px;
+      display: flow-root;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .field-input {
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 600;
+      color: rgb(26, 26, 26);
+      width: 100%;
+      padding: 0;
+      outline: none;
+      cursor: pointer;
+      text-overflow: ellipsis;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 10;
+      opacity: 0;
+    }
+
+    .field-input::placeholder {
+      color: rgb(179, 179, 179);
+      font-weight: 400;
+    }
+
+    /* Checkboxes row */
+    .options-row {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 0 4px;
+    }
+
+    .checkbox-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .checkbox-option input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      border: 2px solid #0073e6;
+      background: #0073e6;
+      cursor: pointer;
+      position: relative;
+      appearance: none;
+    }
+
+    .checkbox-option input[type="checkbox"]:checked::after {
+      content: "✓";
+      color: white;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .checkbox-option label {
+      color: white;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    /* Results */
+    .result-section {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+      display: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .result-section.show {
+      display: block;
+    }
+
+    .result-url {
+      background: #1f2937;
+      color: #f5f7fa;
+      border: 1px solid #374151;
+      border-radius: 6px;
+      padding: 12px;
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+      word-break: break-all;
+      margin: 10px 0;
+      overflow-wrap: anywhere;
+    }
+
+    .copy-btn {
+      background: #0073e6;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: background-color 0.2s ease;
+    }
+
+    .copy-btn:hover {
+      background: #006bd6;
+    }
+
+    .copy-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* UIkit Icons - remove emoji styles since we're using uk-icon */
+
+    /* Dynamic location fields - Booking.com behavior */
+    .dropoff-location {
+      display: none;
+    }
+
+    .dropoff-location.show {
+      display: flex;
+    }
+
+    /* Dynamic field sizing */
+    .search-fields.single-location #pickup-location-field {
+      flex: 2; /* Takes space of both location fields when dropoff hidden */
+    }
+
+    .search-fields:not(.single-location) #pickup-location-field {
+      flex: 1; /* Normal size when both locations visible */
+    }
+
+    /* Date and time fields with reduced widths */
+    #pickup-date-field,
+    #dropoff-date-field {
+      flex: 0.7;
+      min-width: 120px;
+    }
+
+    .time-field {
+      flex: 0.7;
+      min-width: 100px;
+    }
+
+    /* Intermediate responsive - only location fields shrink, dates/times stay fixed */
+    @media (max-width: 1200px) {
+      /* Date and time fields become fixed width to preserve space */
+      #pickup-date-field,
+      #dropoff-date-field {
+        flex: 0 0 140px; /* Fixed width */
+      }
+
+      .time-field {
+        flex: 0 0 110px; /* Fixed width */
+      }
+      
+      /* Location fields take remaining space and shrink as needed */
+      #pickup-location-field {
+        flex: 1;
+        min-width: 150px;
+      }
+      
+      #dropoff-location-field {
+        flex: 1;
+        min-width: 150px;
+      }
+      
+      /* When single location, pickup takes more space but dates/times stay fixed */
+      .search-fields.single-location #pickup-location-field {
+        flex: 2;
+      }
+    }
+
+    /* Full responsive layout for tablets and mobile devices */
+    @media (max-width: 1020px) {
+      .search-fields {
+        flex-wrap: wrap;
+        height: auto;
+        gap: 2px;
+      }
+      
+      /* Row 1: Location fields */
+      #pickup-location-field {
+        flex: 1 1 calc(50% - 1px);
+        min-height: 60px;
+        order: 1;
+      }
+      
+      #dropoff-location-field {
+        flex: 1 1 calc(50% - 1px);
+        min-height: 60px;
+        order: 2;
+      }
+      
+      #dropoff-location-field.show {
+        flex: 1 1 calc(50% - 1px);
+      }
+      
+      /* When single location, pickup takes full width */
+      .search-fields.single-location #pickup-location-field {
+        flex: 1 1 100% !important;
+      }
+      
+      /* Override desktop flex rules for mobile */
+      .search-fields #pickup-location-field {
+        flex: 1 1 calc(50% - 1px) !important;
+      }
+      
+      .search-fields:not(.single-location) #pickup-location-field {
+        flex: 1 1 calc(50% - 1px) !important;
+      }
+      
+      /* Row 2: Pickup date + time */
+      #pickup-date-field {
+        flex: 1 1 calc(50% - 1px);
+        min-height: 60px;
+        order: 3;
+      }
+      
+      #pickup-time-field {
+        flex: 1 1 calc(50% - 1px);
+        min-height: 60px;
+        order: 4;
+      }
+      
+      /* Row 3: Dropoff date + time */
+      #dropoff-date-field {
+        flex: 1 1 calc(50% - 1px);
+        min-height: 60px;
+        order: 5;
+      }
+      
+      #dropoff-time-field {
+        flex: 1 1 calc(50% - 1px);
+        min-height: 60px;
+        order: 6;
+      }
+      
+      /* Row 4: Search button (full width) */
+      #search-button-field {
+        flex: 1 1 100%;
+        min-height: 50px;
+        order: 7;
+      }
+      
+      .options-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 16px 20px;
+      }
+      
+      /* Smaller font and padding for mobile */
+      .field-trigger {
+        padding: 4px 8px;
+      }
+      
+      .field-label {
+        font-size: 11px;
+      }
+      
+      .field-value {
+        font-size: 13px;
+      }
+    }
+
+    /* Custom Litepicker styling */
+    .litepicker {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    .litepicker .container__months .month-item-header .month-item-name {
+      font-weight: 600;
+    }
+
+    .litepicker .container__days .day-item.is-today {
+      color: #0073e6;
+      font-weight: 600;
+    }
+
+    .litepicker .container__days .day-item.is-start-date,
+    .litepicker .container__days .day-item.is-end-date {
+      background-color: #0073e6 !important;
+      color: white !important;
+    }
+
+    .litepicker .container__days .day-item.is-in-range {
+      background-color: rgba(0, 115, 230, 0.1) !important;
+      color: #0073e6 !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Main search bar -->
+    <div class="search-bar">
+      <form class="search-fields" id="rentalForm" autocomplete="off">
+        <!-- Pick-up location -->
+        <div class="search-field form-field-item" id="pickup-location-field">
+          <div class="field-trigger" onclick="focusElement('pickup-location')">
+            <span class="field-icon" uk-icon="icon: location; ratio: 0.8" aria-hidden="true"></span>
+            <div class="field-content">
+              <div class="field-label">Pick-up location</div>
+              <div class="field-value" id="pickup-location-display">Berat City</div>
+              <select id="pickup-location" class="field-input form-field-input" name="pickup-location" required onchange="updateLocationDisplay('pickup-location', this)">
+                <option value="berat" selected>Berat City</option>
+                <option value="shuttle">Airport Shuttle +€70</option>
+                <option value="aeroporto">Tirana Airport +€150</option>
+                <option value="teg">Tirana City TEG +€150</option>
+                <option value="durres">Durrës +€140</option>
+                <option value="saranda">Saranda +€220</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Drop-off location (conditional) -->
+        <div class="search-field dropoff-location form-field-item" id="dropoff-location-field">
+          <div class="field-trigger" onclick="focusElement('dropoff-location')">
+            <span class="field-icon" uk-icon="icon: location; ratio: 0.8" aria-hidden="true"></span>
+            <div class="field-content">
+              <div class="field-label">Drop-off location</div>
+              <div class="field-value" id="dropoff-location-display">Berat City</div>
+              <select id="dropoff-location" class="field-input form-field-input" name="dropoff-location" onchange="updateLocationDisplay('dropoff-location', this)">
+                <option value="berat" selected>Berat City</option>
+                <option value="shuttle">Airport Shuttle +€70</option>
+                <option value="aeroporto">Tirana Airport +€150</option>
+                <option value="teg">Tirana City TEG +€150</option>
+                <option value="durres">Durrës +€140</option>
+                <option value="saranda">Saranda +€220</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pick-up date -->
+        <div class="search-field form-field-item" id="pickup-date-field">
+          <div class="field-trigger" onclick="focusElement('pickup-date')">
+            <span class="field-icon" uk-icon="icon: calendar; ratio: 0.8" aria-hidden="true"></span>
+            <div class="field-content">
+              <div class="field-label">Pick-up date</div>
+              <div class="field-value" id="pickup-date-display">Wed, Sep 17</div>
+              <input type="text" id="pickup-date" class="field-input form-field-input" name="pickup-date" required placeholder="Wed, Sep 17" readonly />
+            </div>
+          </div>
+        </div>
+
+        <!-- Pick-up time -->
+        <div class="search-field form-field-item time-field" id="pickup-time-field">
+          <div class="field-trigger" onclick="focusElement('pickup-time')">
+            <span class="field-icon" uk-icon="icon: clock; ratio: 0.8" aria-hidden="true"></span>
+            <div class="field-content">
+              <div class="field-label">Time</div>
+              <div class="field-value" id="pickup-time-display">10:00 AM</div>
+              <select id="pickup-time" class="field-input form-field-input" name="pickup-time" onchange="updateTimeDisplay('pickup-time', this)"></select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Drop-off date -->
+        <div class="search-field form-field-item" id="dropoff-date-field">
+          <div class="field-trigger" onclick="focusElement('dropoff-date')">
+            <span class="field-icon" uk-icon="icon: calendar; ratio: 0.8" aria-hidden="true"></span>
+            <div class="field-content">
+              <div class="field-label">Drop-off date</div>
+              <div class="field-value" id="dropoff-date-display">Sat, Sep 20</div>
+              <input type="text" id="dropoff-date" class="field-input form-field-input" name="dropoff-date" required placeholder="Sat, Sep 20" readonly />
+            </div>
+          </div>
+        </div>
+
+        <!-- Drop-off time -->
+        <div class="search-field form-field-item time-field" id="dropoff-time-field">
+          <div class="field-trigger" onclick="focusElement('dropoff-time')">
+            <span class="field-icon" uk-icon="icon: clock; ratio: 0.8" aria-hidden="true"></span>
+            <div class="field-content">
+              <div class="field-label">Time</div>
+              <div class="field-value" id="dropoff-time-display">10:00 AM</div>
+              <select id="dropoff-time" class="field-input form-field-input" name="dropoff-time" onchange="updateTimeDisplay('dropoff-time', this)"></select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search button -->
+        <div class="search-field search-btn form-field-item" id="search-button-field" onclick="performSearch()">
+          <span class="search-button-text">SEARCH</span>
+        </div>
+      </form>
+    </div>
+
+    <!-- Options checkboxes -->
+    <div class="options-row">
+      <div class="checkbox-option">
+        <input type="checkbox" id="different-location" onchange="toggleDropoffLocation()" />
+        <label for="different-location">Drop car off at different location</label>
+      </div>
+    </div>
+
+    <!-- Results section -->
+    <div id="results" class="result-section">
+      <h3>Generated URL:</h3>
+      <div id="result-url" class="result-url"></div>
+      <button class="copy-btn" id="copy-btn" onclick="copyUrl()" disabled>
+        <span uk-icon="icon: copy; ratio: 0.8"></span> Copy URL
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Helpers
+    function pad(n){ return String(n).padStart(2,'0'); }
+    function trimInt(str){ return String(parseInt(str,10)); }
+    function formatDMY(d){ return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`; }
+
+    // Map slug → numeric location ID
+    const locationIdMap = {
+      teg: "4",
+      berat: "3",
+      saranda: "6",
+      durres: "5",
+      shuttle: "2",
+      aeroporto: "1"
+    };
+
+    // URL builder function (uses numeric IDs internally)
+    function generateVikrentcarUrl({ pickupLocation, dropoffLocation, diffReturn, pickupDate, dropoffDate, pickupTime, dropoffTime }) {
+      if (!pickupLocation || !pickupDate || !dropoffDate || !pickupTime || !dropoffTime) return null;
+
+      const [puHStr, puMStr] = pickupTime.split(":");
+      const [doHStr, doMStr] = dropoffTime.split(":");
+
+      const pickuph = String(parseInt(puHStr, 10));
+      const pickupm = String(parseInt(puMStr, 10));
+      const releaseh = String(parseInt(doHStr, 10));
+      const releasem = String(parseInt(doMStr, 10));
+
+      const place = locationIdMap[pickupLocation.toLowerCase()] || pickupLocation;
+      const returnplace = diffReturn
+        ? (locationIdMap[(dropoffLocation || pickupLocation).toLowerCase()] || (dropoffLocation || pickupLocation))
+        : place;
+
+      const params = new URLSearchParams({
+        option: "com_vikrentcar",
+        task: "search",
+        place,
+        returnplace,
+        pickupdate: formatDMY(pickupDate),
+        pickuph,
+        pickupm,
+        releasedate: formatDMY(dropoffDate),
+        releaseh,
+        releasem,
+        search: "Search",
+        Itemid: "613"
+      });
+
+      return "https://nomadcamperhire.com/search-your-van/index.php?" + params.toString();
+    }
+
+    // DOM refs
+    const pickupLocationEl = document.getElementById("pickup-location");
+    const dropoffLocationEl = document.getElementById("dropoff-location");
+    const differentLocationEl = document.getElementById("different-location");
+    const pickupDateInput = document.getElementById("pickup-date");
+    const dropoffDateInput = document.getElementById("dropoff-date");
+    const pickupTimeEl = document.getElementById("pickup-time");
+    const dropoffTimeEl = document.getElementById("dropoff-time");
+    const resultUrlBox = document.getElementById("results");
+    const resultUrlEl = document.getElementById("result-url");
+    const copyBtn = document.getElementById("copy-btn");
+    const dropoffLocationField = document.getElementById("dropoff-location-field");
+    const form = document.getElementById("rentalForm");
+
+    // Populate times
+    function populateTimes(select){
+      if (!select) return;
+      select.innerHTML = "";
+      // from 07:00 to 21:45 in 15-min steps
+      for (let h = 7; h <= 21; h++) {
+        for (let m = 0; m < 60; m += 15) {
+          const hh = pad(h);
+          const mm = pad(m);
+          const o = document.createElement("option");
+          o.value = `${hh}:${mm}`;
+          o.textContent = `${hh}:${mm}`;
+          select.appendChild(o);
+          
+          // Set default time to 10:00
+          if (h === 10 && m === 0) {
+            o.selected = true;
+          }
+        }
+      }
+      // Add 22:00 as final option
+      const last = document.createElement("option");
+      last.value = "22:00";
+      last.textContent = "22:00";
+      select.appendChild(last);
+    }
+    
+    populateTimes(pickupTimeEl);
+    populateTimes(dropoffTimeEl);
+
+    // Initialize datepicker
+    const today = new Date();
+    const threeDays = new Date();
+    threeDays.setDate(today.getDate() + 3);
+
+    const picker = new Litepicker({
+      element: pickupDateInput,
+      elementEnd: dropoffDateInput,
+      singleMode: false,
+      numberOfMonths: 2,
+      numberOfColumns: 2,
+      minDate: today,
+      startDate: today,
+      endDate: threeDays,
+      format: "ddd, MMM DD",
+      showWeekNumbers: false,
+      showTooltip: false
+    });
+
+    // Focus helper
+    function focusElement(id) {
+      const element = document.getElementById(id);
+      if (element) {
+        element.focus();
+        element.click();
+      }
+    }
+
+    // Update displays
+    function updateLocationDisplay(fieldId, selectElement) {
+      const displayElement = document.getElementById(fieldId + '-display');
+      if (displayElement && selectElement.selectedOptions[0]) {
+        const selectedText = selectElement.selectedOptions[0].text;
+        displayElement.textContent = selectedText;
+      }
+      rebuildUrl();
+    }
+
+    function updateTimeDisplay(fieldId, selectElement) {
+      const displayElement = document.getElementById(fieldId + '-display');
+      if (displayElement && selectElement.value) {
+        const time24 = selectElement.value;
+        const [hours, minutes] = time24.split(':');
+        const hour12 = parseInt(hours);
+        const ampm = hour12 >= 12 ? 'PM' : 'AM';
+        const displayHour = hour12 === 0 ? 12 : (hour12 > 12 ? hour12 - 12 : hour12);
+        displayElement.textContent = `${displayHour}:${minutes} ${ampm}`;
+      }
+      rebuildUrl();
+    }
+
+    // Toggle dropoff location visibility
+    function toggleDropoffLocation() {
+      const isChecked = differentLocationEl.checked;
+      
+      if (isChecked) {
+        dropoffLocationField.classList.add('show');
+        form.classList.remove('single-location');
+      } else {
+        dropoffLocationField.classList.remove('show');
+        form.classList.add('single-location');
+        // Reset dropoff to pickup values
+        dropoffLocationEl.value = pickupLocationEl.value;
+        updateLocationDisplay('dropoff-location', dropoffLocationEl);
+      }
+      
+      rebuildUrl();
+    }
+
+    // Build URL and update results
+    function rebuildUrl() {
+      const puLoc = pickupLocationEl.value;
+      const doLoc = dropoffLocationEl.value;
+      const diffReturn = differentLocationEl.checked;
+      const puDateObj = picker.getStartDate();
+      const doDateObj = picker.getEndDate();
+      const puTimeVal = pickupTimeEl.value;
+      const doTimeVal = dropoffTimeEl.value;
+
+      if (!puLoc || !puDateObj || !doDateObj || !puTimeVal || !doTimeVal) {
+        resultUrlBox.classList.remove("show");
+        copyBtn.disabled = true;
+        return;
+      }
+
+      const url = generateVikrentcarUrl({
+        pickupLocation: puLoc,
+        dropoffLocation: doLoc,
+        diffReturn,
+        pickupDate: puDateObj,
+        dropoffDate: doDateObj,
+        pickupTime: puTimeVal,
+        dropoffTime: doTimeVal
+      });
+
+      if (!url) return;
+      
+      resultUrlEl.textContent = url;
+      resultUrlBox.classList.add("show");
+      copyBtn.disabled = false;
+    }
+
+    // Perform search
+    function performSearch() {
+      rebuildUrl();
+      const url = resultUrlEl.textContent;
+      if (url && url !== "") {
+        window.open(url, "_blank");
+      }
+    }
+
+    // Copy URL
+    function copyUrl() {
+      const url = resultUrlEl.textContent;
+      if (!url) return;
+      
+      navigator.clipboard.writeText(url).then(() => {
+        const originalText = copyBtn.textContent;
+        copyBtn.textContent = "✓ Copied!";
+        copyBtn.style.background = "#10b981";
+        setTimeout(() => {
+          copyBtn.textContent = originalText;
+          copyBtn.style.background = "#0073e6";
+        }, 2000);
+      }).catch(() => {
+        alert('URL copied to clipboard!');
+      });
+    }
+
+    // Event listeners
+    [pickupLocationEl, dropoffLocationEl, pickupTimeEl, dropoffTimeEl].forEach(el => {
+      if (el) {
+        el.addEventListener("change", rebuildUrl);
+      }
+    });
+
+    picker.on('selected', rebuildUrl);
+
+    // Initialize
+    setTimeout(() => {
+      toggleDropoffLocation(); // Initialize the single location state
+      rebuildUrl();
+    }, 100);
+  </script>
+
+</body>
+</html>
