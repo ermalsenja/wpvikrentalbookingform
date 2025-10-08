@@ -140,11 +140,6 @@ if (! function_exists('nomad_rental_form_yootheme_shortcode')) {
                     width: 20px;
                     height: 20px;
                     display: block;
-                    pointer-events: none;
-                }
-
-                .nomad-field-icon.uk-icon .nomad-icon-fallback {
-                    display: none;
                 }
 
                 .nomad-field-content {
@@ -269,18 +264,10 @@ if (! function_exists('nomad_rental_form_yootheme_shortcode')) {
                     }
 
                     .nomad-pickup-location,
-                    .nomad-dropoff-location {
-                        flex: 1 1 100%;
-                        min-height: 60px;
-                    }
-
-                    .nomad-search-fields.single-location .nomad-pickup-location {
-                        flex: 1 1 100%;
-                    }
-
+                    .nomad-dropoff-location,
                     .nomad-date-field,
                     .nomad-time-field {
-                        flex: 0 0 calc(50% - 1px);
+                        flex: 1 1 calc(50% - 1px) !important;
                         min-height: 60px;
                     }
 
@@ -734,13 +721,8 @@ if (! function_exists('nomad_rental_form_yootheme_shortcode')) {
                 <div class="nomad-search-bar">
                     <form class="nomad-search-fields uk-flex-middle" id="<?php echo esc_attr($unique_id); ?>_form" autocomplete="off">
                         <div class="nomad-search-field nomad-pickup-location" id="<?php echo esc_attr($unique_id); ?>_pickup_location_field">
-                        <div class="nomad-field-trigger" data-target="<?php echo esc_attr($unique_id); ?>_pickup_location">
-                            <span class="nomad-field-icon" uk-icon="icon: location; ratio: 0.85" data-uk-icon="icon: location; ratio: 0.85" aria-hidden="true">
-                                <svg class="nomad-icon-fallback" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false">
-                                    <path d="M12 21s-6-4.5-6-10a6 6 0 0 1 12 0c0 5.5-6 10-6 10Z"></path>
-                                    <circle cx="12" cy="11" r="3"></circle>
-                                </svg>
-                            </span>
+                            <div class="nomad-field-trigger" data-target="<?php echo esc_attr($unique_id); ?>_pickup_location">
+                                <span class="nomad-field-icon" uk-icon="icon: location; ratio: 0.85" aria-hidden="true"></span>
                                 <div class="nomad-field-content">
                                     <div class="nomad-field-label">Pick-up location</div>
                                     <div class="nomad-field-value" id="<?php echo esc_attr($unique_id); ?>_pickup_location_display">Berat City</div>
@@ -757,13 +739,8 @@ if (! function_exists('nomad_rental_form_yootheme_shortcode')) {
                         </div>
 
                         <div class="nomad-search-field nomad-dropoff-location" id="<?php echo esc_attr($unique_id); ?>_dropoff_location_field">
-                        <div class="nomad-field-trigger" data-target="<?php echo esc_attr($unique_id); ?>_dropoff_location">
-                            <span class="nomad-field-icon" uk-icon="icon: location; ratio: 0.85" data-uk-icon="icon: location; ratio: 0.85" aria-hidden="true">
-                                <svg class="nomad-icon-fallback" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false">
-                                    <path d="M12 21s-6-4.5-6-10a6 6 0 0 1 12 0c0 5.5-6 10-6 10Z"></path>
-                                    <circle cx="12" cy="11" r="3"></circle>
-                                </svg>
-                            </span>
+                            <div class="nomad-field-trigger" data-target="<?php echo esc_attr($unique_id); ?>_dropoff_location">
+                                <span class="nomad-field-icon" uk-icon="icon: location; ratio: 0.85" aria-hidden="true"></span>
                                 <div class="nomad-field-content">
                                     <div class="nomad-field-label">Drop-off location</div>
                                     <div class="nomad-field-value" id="<?php echo esc_attr($unique_id); ?>_dropoff_location_display">Berat City</div>
@@ -780,15 +757,8 @@ if (! function_exists('nomad_rental_form_yootheme_shortcode')) {
                         </div>
 
                         <div class="nomad-search-field nomad-date-field" id="<?php echo esc_attr($unique_id); ?>_pickup_date_field">
-                        <div class="nomad-field-trigger" data-target="<?php echo esc_attr($unique_id); ?>_pickup_date">
-                            <span class="nomad-field-icon" uk-icon="icon: calendar; ratio: 0.85" data-uk-icon="icon: calendar; ratio: 0.85" aria-hidden="true">
-                                <svg class="nomad-icon-fallback" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false">
-                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                                </svg>
-                            </span>
+                            <div class="nomad-field-trigger" data-target="<?php echo esc_attr($unique_id); ?>_pickup_date">
+                                <span class="nomad-field-icon" uk-icon="icon: calendar; ratio: 0.85" aria-hidden="true"></span>
                                 <div class="nomad-field-content">
                                     <div class="nomad-field-label">Pick-up date</div>
                                     <div class="nomad-field-value" id="<?php echo esc_attr($unique_id); ?>_pickup_date_display">Wed, Sep 17</div>
@@ -798,13 +768,8 @@ if (! function_exists('nomad_rental_form_yootheme_shortcode')) {
                         </div>
 
                         <div class="nomad-search-field nomad-time-field" id="<?php echo esc_attr($unique_id); ?>_pickup_time_field">
-                        <div class="nomad-field-trigger" data-target="<?php echo esc_attr($unique_id); ?>_pickup_time">
-                            <span class="nomad-field-icon" uk-icon="icon: clock; ratio: 0.85" data-uk-icon="icon: clock; ratio: 0.85" aria-hidden="true">
-                                <svg class="nomad-icon-fallback" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false">
-                                    <circle cx="12" cy="12" r="9"></circle>
-                                    <polyline points="12 7 12 12 16 14"></polyline>
-                                </svg>
-                            </span>
+                            <div class="nomad-field-trigger" data-target="<?php echo esc_attr($unique_id); ?>_pickup_time">
+                                <span class="nomad-field-icon" uk-icon="icon: clock; ratio: 0.85" aria-hidden="true"></span>
                                 <div class="nomad-field-content">
                                     <div class="nomad-field-label">Time</div>
                                     <div class="nomad-field-value" id="<?php echo esc_attr($unique_id); ?>_pickup_time_display">10:00 AM</div>
@@ -814,15 +779,8 @@ if (! function_exists('nomad_rental_form_yootheme_shortcode')) {
                         </div>
 
                         <div class="nomad-search-field nomad-date-field" id="<?php echo esc_attr($unique_id); ?>_dropoff_date_field">
-                        <div class="nomad-field-trigger" data-target="<?php echo esc_attr($unique_id); ?>_dropoff_date">
-                            <span class="nomad-field-icon" uk-icon="icon: calendar; ratio: 0.85" data-uk-icon="icon: calendar; ratio: 0.85" aria-hidden="true">
-                                <svg class="nomad-icon-fallback" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false">
-                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                                </svg>
-                            </span>
+                            <div class="nomad-field-trigger" data-target="<?php echo esc_attr($unique_id); ?>_dropoff_date">
+                                <span class="nomad-field-icon" uk-icon="icon: calendar; ratio: 0.85" aria-hidden="true"></span>
                                 <div class="nomad-field-content">
                                     <div class="nomad-field-label">Drop-off date</div>
                                     <div class="nomad-field-value" id="<?php echo esc_attr($unique_id); ?>_dropoff_date_display">Sat, Sep 20</div>
@@ -832,13 +790,8 @@ if (! function_exists('nomad_rental_form_yootheme_shortcode')) {
                         </div>
 
                         <div class="nomad-search-field nomad-time-field" id="<?php echo esc_attr($unique_id); ?>_dropoff_time_field">
-                        <div class="nomad-field-trigger" data-target="<?php echo esc_attr($unique_id); ?>_dropoff_time">
-                            <span class="nomad-field-icon" uk-icon="icon: clock; ratio: 0.85" data-uk-icon="icon: clock; ratio: 0.85" aria-hidden="true">
-                                <svg class="nomad-icon-fallback" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false">
-                                    <circle cx="12" cy="12" r="9"></circle>
-                                    <polyline points="12 7 12 12 16 14"></polyline>
-                                </svg>
-                            </span>
+                            <div class="nomad-field-trigger" data-target="<?php echo esc_attr($unique_id); ?>_dropoff_time">
+                                <span class="nomad-field-icon" uk-icon="icon: clock; ratio: 0.85" aria-hidden="true"></span>
                                 <div class="nomad-field-content">
                                     <div class="nomad-field-label">Time</div>
                                     <div class="nomad-field-value" id="<?php echo esc_attr($unique_id); ?>_dropoff_time_display">10:00 AM</div>
