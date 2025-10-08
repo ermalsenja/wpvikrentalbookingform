@@ -311,14 +311,7 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                         font-size: 13px;
                     }
 
-                    /* Stack Litepicker months vertically on smaller screens and keep within viewport */
-                    .litepicker {
-                        width: calc(100vw - 24px);
-                        width: min(100vw - 24px, 420px);
-                        max-width: 100%;
-                        margin: 0 auto;
-                    }
-
+                    /* Stack Litepicker months vertically on smaller screens */
                     .litepicker .container__months {
                         flex-direction: column;
                         gap: 12px;
