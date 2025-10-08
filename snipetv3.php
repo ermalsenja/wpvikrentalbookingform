@@ -8,6 +8,40 @@
 
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals -- snippet meant for WPCodeBox/functions.php use.
 
+if (! function_exists('nomad_rental_form_prevent_litespeed_defer')) {
+    /**
+     * Prevent LiteSpeed (or similar optimisers) from deferring critical scripts.
+     *
+     * @param string $tag    Script tag HTML.
+     * @param string $handle Script handle.
+     * @param string $src    Script source URL.
+     *
+     * @return string
+     */
+    function nomad_rental_form_prevent_litespeed_defer($tag, $handle, $src) {
+        $critical_handles = [
+            'litepicker',
+            'nomad-rental-form-enhanced',
+        ];
+
+        if (! in_array($handle, $critical_handles, true)) {
+            return $tag;
+        }
+
+        // Remove defer attribute if present.
+        $tag = preg_replace('/\sdefer(=("|\')defer("|\'))?/', '', $tag);
+
+        // Add LiteSpeed opt-out attribute so the script won't be deferred.
+        if (false === strpos($tag, 'data-litespeed-noopt')) {
+            $tag = str_replace('<script ', '<script data-litespeed-noopt="1" ', $tag);
+        }
+
+        return $tag;
+    }
+
+    add_filter('script_loader_tag', 'nomad_rental_form_prevent_litespeed_defer', 10, 3);
+}
+
 if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
     /**
      * Render the enhanced booking form.
@@ -332,7 +366,7 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
 
             </style>
 
-            <script id="nomad-rental-form-shared-script">
+            <script id="nomad-rental-form-shared-script" data-litespeed-noopt="1">
                 (function() {
                     const locationIdMap = {
                         teg: '4',
@@ -812,7 +846,7 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                 </label>
             </div>
         </div>
-        <script>
+        <script data-litespeed-noopt="1">
             (function() {
                 const config = {
                     formId: '<?php echo esc_js($unique_id); ?>',
