@@ -310,6 +310,23 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                     .nomad-field-value {
                         font-size: 13px;
                     }
+
+                    /* Stack Litepicker months vertically on smaller screens */
+                    .litepicker .container__months {
+                        flex-direction: column;
+                        gap: 12px;
+                    }
+
+                    .litepicker .month-item {
+                        width: 100% !important;
+                        max-width: none;
+                    }
+
+                    .litepicker .container__footer {
+                        flex-direction: column;
+                        align-items: stretch;
+                        gap: 8px;
+                    }
                 }
 
                 @media (max-width: 480px) {
