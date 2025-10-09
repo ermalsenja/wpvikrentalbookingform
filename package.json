@@ -1,0 +1,10 @@
+{
+  "name": "nomad-rental-form",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "npm run test:js && npm run test:php",
+    "test:js": "node --test tests/js/form-utils.test.cjs",
+    "test:php": "php tests/php/run.php"
+  }
+}

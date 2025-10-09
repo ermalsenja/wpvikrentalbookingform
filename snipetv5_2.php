@@ -2,6 +2,9 @@
 /**
  * Enhanced shortcode variant with UIkit icons and refined responsive behaviour.
  *
+ * Version 5.2 tweaks: keep pick-up/drop-off paired on tablet widths but stack them on
+ * narrow mobile breakpoints using YOOtheme Pro/UIkit breakpoint thresholds (640/960/1200px).
+ *
  * Usage:
  *   [nomad_rental_form_enhanced base_url="https://example.com/search" itemid="613"]
  */
@@ -215,7 +218,8 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                     flex: 2;
                 }
 
-                .nomad-search-fields:not(.single-location) .nomad-pickup-location {
+                .nomad-search-fields:not(.single-location) .nomad-pickup-location,
+                .nomad-search-fields:not(.single-location) .nomad-dropoff-location {
                     flex: 1;
                 }
 
@@ -262,7 +266,8 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                     margin: 0;
                 }
 
-                @media (max-width: 1200px) {
+                /* Below UIkit/YOOtheme large breakpoint (@l < 1200px). */
+                @media (max-width: 1199.98px) {
                     .nomad-date-field {
                         flex: 0 0 140px;
                     }
@@ -281,7 +286,8 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                     }
                 }
 
-                @media (max-width: 1020px) {
+                /* Below UIkit/YOOtheme medium breakpoint (@m < 960px). */
+                @media (max-width: 959.98px) {
                     .nomad-search-fields {
                         flex-wrap: wrap;
                         gap: 2px;
@@ -305,6 +311,12 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
 
                     .nomad-search-fields.single-location .nomad-pickup-location {
                         flex: 1 1 100% !important;
+                    }
+
+                    .nomad-search-fields:not(.single-location) .nomad-pickup-location,
+                    .nomad-search-fields:not(.single-location) .nomad-dropoff-location,
+                    .nomad-search-fields:not(.single-location) .nomad-dropoff-location.show {
+                        flex: 1 1 calc(50% - 1px) !important;
                     }
 
                     .nomad-search-field[id$="_pickup_date_field"] {
@@ -349,7 +361,21 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                     }
                 }
 
-                @media (max-width: 680px) {
+                /* Below UIkit/YOOtheme small breakpoint (@s < 640px). */
+                @media (max-width: 639.98px) {
+                    .nomad-pickup-location,
+                    .nomad-dropoff-location,
+                    .nomad-search-fields:not(.single-location) .nomad-pickup-location,
+                    .nomad-search-fields:not(.single-location) .nomad-dropoff-location,
+                    .nomad-search-fields:not(.single-location) .nomad-dropoff-location.show {
+                        flex: 1 1 100% !important;
+                        min-height: 56px;
+                    }
+
+                    .nomad-search-fields.single-location .nomad-pickup-location {
+                        flex: 1 1 100% !important;
+                    }
+
                     .nomad-search-field[id$="_pickup_date_field"],
                     .nomad-search-field[id$="_pickup_time_field"],
                     .nomad-search-field[id$="_dropoff_date_field"],
@@ -391,7 +417,8 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                     }
                 }
 
-                @media (max-width: 480px) {
+                /* Very small handsets */
+                @media (max-width: 479.98px) {
                     .nomad-date-field,
                     .nomad-time-field {
                         flex: 1 1 100%;
