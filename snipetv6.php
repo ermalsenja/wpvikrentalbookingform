@@ -2,6 +2,11 @@
 /**
  * Enhanced shortcode variant with UIkit icons and refined responsive behaviour.
  *
+ * Version 6 focuses on resilience: improved accessibility semantics, safer
+ * toggling logic for the drop-off field, Litepicker fallbacks, and a cleaner
+ * responsive layout that keeps tablet parity while stacking gracefully on
+ * narrow phones.
+ *
  * Usage:
  *   [nomad_rental_form_enhanced base_url="https://example.com/search" itemid="613"]
  */
@@ -69,12 +74,13 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
             [],
             '2.0.11'
         );
-        wp_enqueue_script( 
-            'litepicker', 'https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js', 
-            [], 
-            '2.0.11', 
+        wp_enqueue_script(
+            'litepicker',
+            'https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js',
+            [],
+            '2.0.11',
             true
-);
+        );
 
         $unique_id = 'nomad_form_' . wp_rand(1000, 9999);
 
@@ -100,23 +106,58 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                 }
 
                 .nomad-search-fields {
+                    --nomad-gap: 2px;
+                    --nomad-radius: 6px;
                     display: flex;
+                    flex-wrap: wrap;
                     align-items: stretch;
                     width: 100%;
-                    gap: 2px;
+                    gap: var(--nomad-gap);
                 }
 
                 .nomad-search-field {
                     background: #fff;
                     position: relative;
-                    border-radius: 6px;
-                    flex: 1;
+                    border-radius: var(--nomad-radius);
+                    flex: 1 1 160px;
                     transition: background-color 0.15s ease;
                     overflow: hidden;
+                    display: flex;
                 }
 
                 .nomad-search-field:hover {
-                    background: #fafafa;
+                    background: #f6f6f6;
+                }
+
+                .nomad-search-fields.single-location .nomad-pickup-location {
+                    flex: 1.7 1 320px;
+                }
+
+                .nomad-search-fields:not(.single-location) .nomad-pickup-location,
+                .nomad-search-fields:not(.single-location) .nomad-dropoff-location.is-visible {
+                    flex: 1.25 1 240px;
+                }
+
+                .nomad-dropoff-location {
+                    display: none;
+                }
+
+                .nomad-dropoff-location.is-visible {
+                    display: flex;
+                }
+
+                .nomad-search-field[hidden] {
+                    display: none !important;
+                }
+
+                .nomad-date-field {
+                    flex: 1 1 180px;
+                    min-width: 140px;
+                }
+
+                .nomad-time-field {
+                    flex: 0.85 1 140px;
+                    min-width: 120px;
                 }
 
                 .nomad-search-btn {
@@ -125,16 +166,34 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                     justify-content: center;
                     align-items: center;
                     display: flex;
-                    flex: 0 0 120px;
+                    flex: 0 0 clamp(120px, 14vw, 160px);
                     font-weight: 600;
                     font-size: 16px;
                     line-height: 24px;
                     transition: transform 0.12s cubic-bezier(0.2, 0, 0.4, 0.8);
                     border: none;
-                    border-radius: 6px;
+                    border-radius: var(--nomad-radius);
                     cursor: pointer;
+                    text-transform: uppercase;
+                    letter-spacing: 0.04em;
                 }
 
+                .nomad-search-btn:focus-visible {
+                    outline: 3px solid rgba(0, 115, 230, 0.3);
+                    outline-offset: 2px;
+                }
+
+                .nomad-search-btn:disabled {
+                    opacity: 0.65;
+                    cursor: not-allowed;
+                }
+
+                @media (prefers-reduced-motion: reduce) {
+                    .nomad-search-btn {
+                        transition: none;
+                        transform: none !important;
+                    }
+                }
 
                 .nomad-field-trigger {
                     display: flex;
@@ -142,13 +201,12 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                     gap: 12px;
                     padding: 6px 12px;
                     width: 100%;
-                    height: 100%;
+                    min-height: 58px;
                     cursor: pointer;
-                    min-height: 52px;
                 }
 
                 .nomad-field-icon {
-                    opacity: 0.75;
+                    opacity: 0.85;
                     flex-shrink: 0;
                     display: inline-flex;
                     align-items: center;
@@ -156,15 +214,24 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                 }
 
                 .nomad-field-icon svg {
-                    width: 20px;
-                    height: 20px;
+                    width: 22px;
+                    height: 22px;
                     display: block;
                     pointer-events: none;
+                    stroke: currentColor !important;
+                    fill: none;
                 }
 
-                .nomad-field-icon.uk-icon .nomad-icon-fallback,
-                .nomad-field-icon[data-uk-icon] .nomad-icon-fallback {
-                    display: none;
+                .nomad-rental-container .nomad-field-icon,
+                .nomad-rental-container .nomad-field-icon .uk-icon,
+                .nomad-rental-container .nomad-field-icon [uk-icon],
+                .nomad-rental-container .nomad-field-icon [data-uk-icon] {
+                    color: #000;
+                    opacity: 1;
+                }
+
+                .nomad-field-trigger:hover .nomad-field-icon {
+                    color: #111;
                 }
 
                 .nomad-field-content {
@@ -204,37 +271,8 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                     padding: 0;
                     outline: none;
                     position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
+                    inset: 0;
                     opacity: 0;
-                }
-
-                .nomad-search-fields.single-location .nomad-pickup-location {
-                    flex: 2;
-                }
-
-                .nomad-search-fields:not(.single-location) .nomad-pickup-location {
-                    flex: 1;
-                }
-
-                .nomad-dropoff-location {
-                    display: none;
-                }
-
-                .nomad-dropoff-location.show {
-                    display: flex;
-                }
-
-                .nomad-date-field {
-                    flex: 0.7;
-                    min-width: 120px;
-                }
-
-                .nomad-time-field {
-                    flex: 0.6;
-                    min-width: 110px;
                 }
 
                 .nomad-options-row {
@@ -264,76 +302,61 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
 
                 @media (max-width: 1200px) {
                     .nomad-date-field {
-                        flex: 0 0 140px;
+                        flex: 0.95 1 150px;
                     }
 
                     .nomad-time-field {
-                        flex: 0 0 110px;
-                    }
-
-                    .nomad-pickup-location,
-                    .nomad-dropoff-location {
-                        min-width: 150px;
-                    }
-
-                    .nomad-search-fields.single-location .nomad-pickup-location {
-                        flex: 2;
+                        flex: 0.8 1 120px;
                     }
                 }
 
                 @media (max-width: 1020px) {
                     .nomad-search-fields {
-                        flex-wrap: wrap;
-                        gap: 2px;
+                        gap: 6px;
+                    }
+
+                    .nomad-search-field {
+                        min-height: 60px;
                     }
 
                     .nomad-pickup-location {
-                        flex: 1 1 calc(50% - 1px);
-                        min-height: 60px;
+                        flex: 1 1 calc(50% - 3px);
                         order: 1;
                     }
 
                     .nomad-dropoff-location {
-                        flex: 1 1 calc(50% - 1px);
-                        min-height: 60px;
                         order: 2;
                     }
 
-                    .nomad-dropoff-location.show {
-                        flex: 1 1 calc(50% - 1px);
+                    .nomad-dropoff-location.is-visible {
+                        flex: 1 1 calc(50% - 3px);
                     }
 
                     .nomad-search-fields.single-location .nomad-pickup-location {
-                        flex: 1 1 100% !important;
+                        flex: 1 1 100%;
                     }
 
-                    .nomad-search-field[id$="_pickup_date_field"] {
-                        flex: 1 1 calc(50% - 1px);
-                        min-height: 60px;
+                    .nomad-date-field {
+                        flex: 1 1 calc(50% - 3px);
                         order: 3;
                     }
 
-                    .nomad-search-field[id$="_pickup_time_field"] {
-                        flex: 1 1 calc(50% - 1px);
-                        min-height: 60px;
+                    .nomad-time-field {
+                        flex: 1 1 calc(50% - 3px);
                         order: 4;
                     }
 
                     .nomad-search-field[id$="_dropoff_date_field"] {
-                        flex: 1 1 calc(50% - 1px);
-                        min-height: 60px;
                         order: 5;
                     }
 
                     .nomad-search-field[id$="_dropoff_time_field"] {
-                        flex: 1 1 calc(50% - 1px);
-                        min-height: 60px;
                         order: 6;
                     }
 
                     .nomad-search-btn {
                         flex: 1 1 100%;
-                        min-height: 50px;
+                        min-height: 54px;
                         order: 7;
                     }
 
@@ -350,12 +373,17 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                 }
 
                 @media (max-width: 680px) {
+                    .nomad-pickup-location,
+                    .nomad-dropoff-location.is-visible {
+                        flex: 1 1 100%;
+                        order: initial;
+                    }
+
                     .nomad-search-field[id$="_pickup_date_field"],
                     .nomad-search-field[id$="_pickup_time_field"],
                     .nomad-search-field[id$="_dropoff_date_field"],
                     .nomad-search-field[id$="_dropoff_time_field"] {
-                        flex: 1 1 calc(50% - 2px);
-                        min-width: 0;
+                        flex: 1 1 calc(50% - 3px);
                     }
 
                     .nomad-field-label {
@@ -366,9 +394,7 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                         font-size: 13px;
                     }
 
-                    /* Stack Litepicker months vertically on smaller screens and keep within viewport */
                     .litepicker {
-                        width: calc(100vw - 24px);
                         width: min(100vw - 24px, 420px);
                         max-width: 100%;
                         margin: 0 auto;
@@ -392,8 +418,10 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                 }
 
                 @media (max-width: 480px) {
-                    .nomad-date-field,
-                    .nomad-time-field {
+                    .nomad-search-field[id$="_pickup_date_field"],
+                    .nomad-search-field[id$="_pickup_time_field"],
+                    .nomad-search-field[id$="_dropoff_date_field"],
+                    .nomad-search-field[id$="_dropoff_time_field"] {
                         flex: 1 1 100%;
                     }
                 }
@@ -417,32 +445,6 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                     background-color: rgba(0, 115, 230, 0.1) !important;
                     color: #0073e6 !important;
                 }
-                /* 1) Colora di nero tutte le icone (UIkit + fallback) */
-.nomad-field-icon,
-.nomad-field-icon .uk-icon,
-.nomad-field-icon [uk-icon],
-.nomad-field-icon [data-uk-icon] {
-  color: #000;   /* nero */
-  opacity: 1;    /* niente grigio */
-}
-
-/* 2) Assicurati che lo stroke segua il color anche se il tema lo sovrascrive */
-.nomad-field-icon svg {
-  stroke: currentColor !important;
-  fill: none; /* i tuoi SVG sono a traccia */
-}
-
-/* (opzionale) Dimensione leggermente più grande */
-.nomad-field-icon svg {
-  width: 22px;
-  height: 22px;
-}
-
-/* (opzionale) Se vuoi effetto hover diverso, cambialo qui */
-.nomad-field-trigger:hover .nomad-field-icon {
-  color: #000; /* lascia nero oppure metti un #111/#333 per micro-contrasto */
-}
-
             </style>
 
             <script id="nomad-rental-form-shared-script" data-litespeed-noopt="1">
@@ -474,31 +476,27 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                         return String(value).padStart(2, '0');
                     }
 
-                    function normalizePickerDate(value) {
+                    function normalizeDate(value) {
                         if (! value) {
                             return null;
                         }
 
-                        if (value instanceof Date) {
+                        if (value instanceof Date && ! Number.isNaN(value.getTime())) {
                             return value;
                         }
 
-                        if (typeof value.toDate === 'function') {
-                            const date = value.toDate();
-                            if (date instanceof Date) {
-                                return date;
+                        if (value && typeof value.toDate === 'function') {
+                            const coerced = value.toDate();
+                            if (coerced instanceof Date && ! Number.isNaN(coerced.getTime())) {
+                                return coerced;
                             }
                         }
 
-                        if (typeof value.toJSDate === 'function') {
-                            const date = value.toJSDate();
-                            if (date instanceof Date) {
-                                return date;
+                        if (value && typeof value.toJSDate === 'function') {
+                            const coerced = value.toJSDate();
+                            if (coerced instanceof Date && ! Number.isNaN(coerced.getTime())) {
+                                return coerced;
                             }
-                        }
-
-                        if (value && value.dateInstance instanceof Date) {
-                            return value.dateInstance;
                         }
 
                         if (value && typeof value.getTime === 'function') {
@@ -517,7 +515,7 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                     }
 
                     function formatDMY(date) {
-                        const normalized = normalizePickerDate(date);
+                        const normalized = normalizeDate(date);
                         if (! normalized) {
                             return '';
                         }
@@ -530,12 +528,55 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                     }
 
                     function formatDisplayDate(date) {
-                        const normalized = normalizePickerDate(date);
+                        const normalized = normalizeDate(date);
                         if (! normalized) {
                             return '';
                         }
 
                         return displayFormatter.format(normalized);
+                    }
+
+                    function buildQueryString(params) {
+                        if (typeof URLSearchParams === 'function') {
+                            return new URLSearchParams(params).toString();
+                        }
+
+                        return Object.keys(params)
+                            .map(function(key) {
+                                return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
+                            })
+                            .join('&');
+                    }
+
+                    function formatInputDate(date) {
+                        const normalized = normalizeDate(date);
+                        if (! normalized) {
+                            return '';
+                        }
+
+                        const year = normalized.getFullYear();
+                        const month = pad(normalized.getMonth() + 1);
+                        const day = pad(normalized.getDate());
+
+                        return `${year}-${month}-${day}`;
+                    }
+
+                    function parseInputDate(value) {
+                        if (! value) {
+                            return null;
+                        }
+
+                        const parts = value.split('-').map(Number);
+                        if (parts.length !== 3 || parts.some(function(part) { return Number.isNaN(part); })) {
+                            return null;
+                        }
+
+                        const [year, month, day] = parts;
+                        const parsed = new Date();
+                        parsed.setHours(0, 0, 0, 0);
+                        parsed.setFullYear(year, month - 1, day);
+
+                        return Number.isNaN(parsed.getTime()) ? null : parsed;
                     }
 
                     function populateTimes(select) {
@@ -570,9 +611,7 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                         }
 
                         const selectedOption = selectElement.selectedOptions[0];
-                        if (selectedOption) {
-                            display.textContent = selectedOption.textContent;
-                        }
+                        display.textContent = selectedOption ? selectedOption.textContent : '';
                     }
 
                     function updateTimeDisplay(formId, field, selectElement) {
@@ -594,9 +633,92 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                         display.textContent = `${twelveHour}:${minutes} ${isPM ? 'PM' : 'AM'}`;
                     }
 
+                    function initDateAdapter(pickupInput, dropoffInput, onChange) {
+                        if (typeof Litepicker === 'function') {
+                            const today = new Date();
+                            const future = new Date(today.getTime());
+                            future.setDate(future.getDate() + 3);
+
+                            const picker = new Litepicker({
+                                element: pickupInput,
+                                elementEnd: dropoffInput,
+                                singleMode: false,
+                                numberOfMonths: 2,
+                                numberOfColumns: 2,
+                                minDate: today,
+                                startDate: today,
+                                endDate: future,
+                                format: 'ddd, MMM DD',
+                                showWeekNumbers: false,
+                                showTooltip: false
+                            });
+
+                            picker.on('selected', function(startDate, endDate) {
+                                onChange(startDate, endDate);
+                            });
+
+                            onChange(picker.getStartDate(), picker.getEndDate());
+
+                            return {
+                                getStartDate() {
+                                    return picker.getStartDate();
+                                },
+                                getEndDate() {
+                                    return picker.getEndDate();
+                                }
+                            };
+                        }
+
+                        pickupInput.removeAttribute('readonly');
+                        dropoffInput.removeAttribute('readonly');
+                        pickupInput.type = 'date';
+                        dropoffInput.type = 'date';
+
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        const defaultEnd = new Date(today.getTime());
+                        defaultEnd.setDate(defaultEnd.getDate() + 3);
+
+                        pickupInput.value = pickupInput.value || formatInputDate(today);
+                        dropoffInput.value = dropoffInput.value || formatInputDate(defaultEnd);
+
+                        function ensureRange() {
+                            let start = parseInputDate(pickupInput.value);
+                            let end = parseInputDate(dropoffInput.value);
+
+                            if (! start) {
+                                start = new Date();
+                                start.setHours(0, 0, 0, 0);
+                                pickupInput.value = formatInputDate(start);
+                            }
+
+                            if (! end || end < start) {
+                                end = new Date(start.getTime());
+                                end.setDate(end.getDate() + 3);
+                                dropoffInput.value = formatInputDate(end);
+                            }
+
+                            onChange(start, end);
+                        }
+
+                        pickupInput.addEventListener('change', ensureRange);
+                        dropoffInput.addEventListener('change', ensureRange);
+
+                        ensureRange();
+
+                        return {
+                            getStartDate() {
+                                return parseInputDate(pickupInput.value);
+                            },
+                            getEndDate() {
+                                return parseInputDate(dropoffInput.value);
+                            }
+                        };
+                    }
+
                     function generateVikrentcarUrl(baseUrl, itemId, data) {
-                        const pickupDate = normalizePickerDate(data.pickupDate);
-                        const dropoffDate = normalizePickerDate(data.dropoffDate);
+                        const pickupDate = normalizeDate(data.pickupDate);
+                        const dropoffDate = normalizeDate(data.dropoffDate);
 
                         if (! baseUrl || ! pickupDate || ! dropoffDate || ! data.pickupTime || ! data.dropoffTime) {
                             return null;
@@ -613,7 +735,7 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                             ? (locationIdMap[dropoffLocation] || data.dropoffLocation || data.pickupLocation)
                             : place;
 
-                        const params = new URLSearchParams({
+                        const params = {
                             option: 'com_vikrentcar',
                             task: 'search',
                             place,
@@ -626,14 +748,22 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                             releasem: String(parseInt(dropoffMinute, 10)),
                             search: 'Search',
                             Itemid: itemId
-                        });
+                        };
 
-                        return `${baseUrl}?${params.toString()}`;
+                        const query = buildQueryString(params);
+                        const separator = baseUrl.indexOf('?') === -1 ? '?' : '&';
+
+                        return `${baseUrl}${separator}${query}`;
                     }
 
                     function initForm(config) {
                         const { formId, baseUrl, itemId } = config;
                         const form = document.getElementById(`${formId}_form`);
+
+                        if (! form) {
+                            return;
+                        }
+
                         const pickupLocationEl = document.getElementById(`${formId}_pickup_location`);
                         const dropoffLocationEl = document.getElementById(`${formId}_dropoff_location`);
                         const differentLocationEl = document.getElementById(`${formId}_different_location`);
@@ -644,17 +774,19 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                         const pickupTimeEl = document.getElementById(`${formId}_pickup_time`);
                         const dropoffTimeEl = document.getElementById(`${formId}_dropoff_time`);
                         const dropoffField = document.getElementById(`${formId}_dropoff_location_field`);
-                        const searchButton = document.getElementById(`${formId}_search_button`);
-
-                        if (! form || typeof Litepicker !== 'function') {
+                        if (! pickupLocationEl || ! dropoffLocationEl || ! differentLocationEl || ! pickupDateInput || ! dropoffDateInput) {
                             return;
                         }
 
-                        form.addEventListener('submit', function(event) {
-                            event.preventDefault();
-                        });
-
                         form.classList.add('single-location');
+                        form.setAttribute('role', 'search');
+                        form.setAttribute('novalidate', 'novalidate');
+
+                        if (dropoffField) {
+                            differentLocationEl.setAttribute('aria-controls', dropoffField.id);
+                            dropoffField.setAttribute('role', 'group');
+                            dropoffField.setAttribute('aria-label', 'Drop-off location');
+                        }
 
                         form.querySelectorAll('.nomad-field-trigger').forEach(function(trigger) {
                             const targetId = trigger.getAttribute('data-target');
@@ -678,21 +810,54 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                         updateTimeDisplay(formId, 'pickup_time', pickupTimeEl);
                         updateTimeDisplay(formId, 'dropoff_time', dropoffTimeEl);
 
-                        function syncDropoffState() {
-                            const isDifferent = Boolean(differentLocationEl.checked);
-
-                            if (isDifferent) {
-                                dropoffField.classList.add('show');
-                                form.classList.remove('single-location');
-                            } else {
-                                dropoffField.classList.remove('show');
-                                form.classList.add('single-location');
-                                dropoffLocationEl.value = pickupLocationEl.value;
-                                updateLocationDisplay(formId, 'dropoff_location', dropoffLocationEl);
+                        function applySelectedDates(start, end) {
+                            const startText = formatDisplayDate(start) || 'Select date';
+                            const endText = formatDisplayDate(end || start) || 'Select date';
+                            if (pickupDateDisplay) {
+                                pickupDateDisplay.textContent = startText;
+                            }
+                            if (dropoffDateDisplay) {
+                                dropoffDateDisplay.textContent = endText;
                             }
                         }
 
-                        differentLocationEl.addEventListener('change', syncDropoffState);
+                        const dateAdapter = initDateAdapter(pickupDateInput, dropoffDateInput, applySelectedDates);
+
+                        if (pickupDateDisplay && dropoffDateDisplay) {
+                            applySelectedDates(dateAdapter.getStartDate(), dateAdapter.getEndDate());
+                        }
+
+                        function syncDropoffState(options) {
+                            const shouldFocus = options && options.shouldFocus;
+                            const isDifferent = Boolean(differentLocationEl.checked);
+
+                            if (dropoffField) {
+                                dropoffField.classList.toggle('is-visible', isDifferent);
+                                dropoffField.hidden = ! isDifferent;
+                                dropoffField.setAttribute('aria-hidden', String(! isDifferent));
+                            }
+
+                            form.classList.toggle('single-location', ! isDifferent);
+                            dropoffLocationEl.disabled = ! isDifferent;
+                            dropoffLocationEl.required = isDifferent;
+                            dropoffLocationEl.setAttribute('aria-disabled', String(! isDifferent));
+                            dropoffLocationEl.tabIndex = isDifferent ? 0 : -1;
+                            differentLocationEl.setAttribute('aria-expanded', String(isDifferent));
+                            differentLocationEl.setAttribute('aria-checked', String(isDifferent));
+
+                            if (! isDifferent) {
+                                dropoffLocationEl.value = pickupLocationEl.value;
+                                updateLocationDisplay(formId, 'dropoff_location', dropoffLocationEl);
+                            } else if (shouldFocus && dropoffLocationEl) {
+                                dropoffLocationEl.focus({ preventScroll: false });
+                            }
+                        }
+
+                        differentLocationEl.addEventListener('change', function() {
+                            syncDropoffState({ shouldFocus: differentLocationEl.checked });
+                        });
+
+                        syncDropoffState();
 
                         pickupLocationEl.addEventListener('change', function() {
                             updateLocationDisplay(formId, 'pickup_location', pickupLocationEl);
@@ -714,61 +879,26 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                             updateTimeDisplay(formId, 'dropoff_time', dropoffTimeEl);
                         });
 
-                        syncDropoffState();
+                        form.addEventListener('submit', function(event) {
+                            event.preventDefault();
 
-                        const today = new Date();
-                        const future = new Date(today.getTime());
-                        future.setDate(future.getDate() + 3);
-
-                        const picker = new Litepicker({
-                            element: pickupDateInput,
-                            elementEnd: dropoffDateInput,
-                            singleMode: false,
-                            numberOfMonths: 2,
-                            numberOfColumns: 2,
-                            minDate: today,
-                            startDate: today,
-                            endDate: future,
-                            format: 'ddd, MMM DD',
-                            showWeekNumbers: false,
-                            showTooltip: false
-                        });
-
-                        window[`${formId}_picker`] = picker;
-
-                        function applySelectedDates(start, end) {
-                            const startText = formatDisplayDate(start);
-                            const endText = formatDisplayDate(end || start);
-                            pickupDateDisplay.textContent = startText;
-                            dropoffDateDisplay.textContent = endText;
-                            pickupDateInput.value = startText;
-                            dropoffDateInput.value = endText;
-                        }
-
-                        picker.on('selected', function(startDate, endDate) {
-                            applySelectedDates(startDate, endDate);
-                        });
-
-                        applySelectedDates(picker.getStartDate(), picker.getEndDate());
-
-                        if (searchButton) {
-                            searchButton.addEventListener('click', function(event) {
-                                event.preventDefault();
-                                const url = generateVikrentcarUrl(baseUrl, itemId, {
-                                    pickupLocation: pickupLocationEl.value,
-                                    dropoffLocation: dropoffLocationEl.value,
-                                    diffReturn: differentLocationEl.checked,
-                                    pickupDate: picker.getStartDate(),
-                                    dropoffDate: picker.getEndDate(),
-                                    pickupTime: pickupTimeEl.value,
-                                    dropoffTime: dropoffTimeEl.value
-                                });
-
-                                if (url) {
-                                    window.open(url, '_self', 'noopener');
-                                }
+                            const url = generateVikrentcarUrl(baseUrl, itemId, {
+                                pickupLocation: pickupLocationEl.value,
+                                dropoffLocation: dropoffLocationEl.value,
+                                diffReturn: differentLocationEl.checked,
+                                pickupDate: dateAdapter.getStartDate(),
+                                dropoffDate: dateAdapter.getEndDate(),
+                                pickupTime: pickupTimeEl.value,
+                                dropoffTime: dropoffTimeEl.value
                             });
-                        }
+
+                            if (! url) {
+                                form.reportValidity();
+                                return;
+                            }
+
+                            window.location.href = url;
+                        });
                     }
 
                     const NomadRentalForm = {
@@ -798,7 +928,7 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
         <div class="nomad-rental-container" id="<?php echo esc_attr($unique_id); ?>">
             <div class="nomad-search-bar">
                 <form class="nomad-search-fields" id="<?php echo esc_attr($unique_id); ?>_form" autocomplete="off">
-                    <div class="nomad-search-field nomad-pickup-location" id="<?php echo esc_attr($unique_id); ?>_pickup_location_field">
+                    <div class="nomad-search-field nomad-pickup-location" id="<?php echo esc_attr($unique_id); ?>_pickup_location_field" role="group" aria-label="Pick-up location">
                         <div class="nomad-field-trigger" data-target="<?php echo esc_attr($unique_id); ?>_pickup_location">
                             <span class="nomad-field-icon" uk-icon="icon: location; ratio: 0.85" data-uk-icon="icon: location; ratio: 0.85" aria-hidden="true">
                                 <svg class="nomad-icon-fallback" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false">
@@ -808,7 +938,7 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                             </span>
                             <div class="nomad-field-content">
                                 <div class="nomad-field-label">Pick-up location</div>
-                                <div class="nomad-field-value" id="<?php echo esc_attr($unique_id); ?>_pickup_location_display">Berat City</div>
+                                <div class="nomad-field-value" id="<?php echo esc_attr($unique_id); ?>_pickup_location_display" aria-live="polite" aria-atomic="true">Berat City</div>
                                 <select id="<?php echo esc_attr($unique_id); ?>_pickup_location" class="nomad-field-input" name="pickup-location" required>
                                     <option value="berat" selected>Berat City</option>
                                     <option value="shuttle">Airport Shuttle +€70</option>
@@ -821,7 +951,7 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                         </div>
                     </div>
 
-                    <div class="nomad-search-field nomad-dropoff-location" id="<?php echo esc_attr($unique_id); ?>_dropoff_location_field">
+                    <div class="nomad-search-field nomad-dropoff-location" id="<?php echo esc_attr($unique_id); ?>_dropoff_location_field" hidden aria-hidden="true">
                         <div class="nomad-field-trigger" data-target="<?php echo esc_attr($unique_id); ?>_dropoff_location">
                             <span class="nomad-field-icon" uk-icon="icon: location; ratio: 0.85" data-uk-icon="icon: location; ratio: 0.85" aria-hidden="true">
                                 <svg class="nomad-icon-fallback" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false">
@@ -831,8 +961,8 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                             </span>
                             <div class="nomad-field-content">
                                 <div class="nomad-field-label">Drop-off location</div>
-                                <div class="nomad-field-value" id="<?php echo esc_attr($unique_id); ?>_dropoff_location_display">Berat City</div>
-                                <select id="<?php echo esc_attr($unique_id); ?>_dropoff_location" class="nomad-field-input" name="dropoff-location">
+                                <div class="nomad-field-value" id="<?php echo esc_attr($unique_id); ?>_dropoff_location_display" aria-live="polite" aria-atomic="true">Berat City</div>
+                                <select id="<?php echo esc_attr($unique_id); ?>_dropoff_location" class="nomad-field-input" name="dropoff-location" disabled>
                                     <option value="berat" selected>Berat City</option>
                                     <option value="shuttle">Airport Shuttle +€70</option>
                                     <option value="aeroporto">Tirana Airport +€150</option>
@@ -856,7 +986,7 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                             </span>
                             <div class="nomad-field-content">
                                 <div class="nomad-field-label">Pick-up date</div>
-                                <div class="nomad-field-value" id="<?php echo esc_attr($unique_id); ?>_pickup_date_display">Wed, Sep 17</div>
+                                <div class="nomad-field-value" id="<?php echo esc_attr($unique_id); ?>_pickup_date_display" aria-live="polite" aria-atomic="true">Wed, Sep 17</div>
                                 <input type="text" id="<?php echo esc_attr($unique_id); ?>_pickup_date" class="nomad-field-input" name="pickup-date" required readonly />
                             </div>
                         </div>
@@ -872,8 +1002,8 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                             </span>
                             <div class="nomad-field-content">
                                 <div class="nomad-field-label">Time</div>
-                                <div class="nomad-field-value" id="<?php echo esc_attr($unique_id); ?>_pickup_time_display">10:00 AM</div>
-                                <select id="<?php echo esc_attr($unique_id); ?>_pickup_time" class="nomad-field-input" name="pickup-time"></select>
+                                <div class="nomad-field-value" id="<?php echo esc_attr($unique_id); ?>_pickup_time_display" aria-live="polite" aria-atomic="true">10:00 AM</div>
+                                <select id="<?php echo esc_attr($unique_id); ?>_pickup_time" class="nomad-field-input" name="pickup-time" required></select>
                             </div>
                         </div>
                     </div>
@@ -890,7 +1020,7 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                             </span>
                             <div class="nomad-field-content">
                                 <div class="nomad-field-label">Drop-off date</div>
-                                <div class="nomad-field-value" id="<?php echo esc_attr($unique_id); ?>_dropoff_date_display">Sat, Sep 20</div>
+                                <div class="nomad-field-value" id="<?php echo esc_attr($unique_id); ?>_dropoff_date_display" aria-live="polite" aria-atomic="true">Sat, Sep 20</div>
                                 <input type="text" id="<?php echo esc_attr($unique_id); ?>_dropoff_date" class="nomad-field-input" name="dropoff-date" required readonly />
                             </div>
                         </div>
@@ -906,21 +1036,21 @@ if (! function_exists('nomad_rental_form_enhanced_shortcode')) {
                             </span>
                             <div class="nomad-field-content">
                                 <div class="nomad-field-label">Time</div>
-                                <div class="nomad-field-value" id="<?php echo esc_attr($unique_id); ?>_dropoff_time_display">10:00 AM</div>
-                                <select id="<?php echo esc_attr($unique_id); ?>_dropoff_time" class="nomad-field-input" name="dropoff-time"></select>
+                                <div class="nomad-field-value" id="<?php echo esc_attr($unique_id); ?>_dropoff_time_display" aria-live="polite" aria-atomic="true">10:00 AM</div>
+                                <select id="<?php echo esc_attr($unique_id); ?>_dropoff_time" class="nomad-field-input" name="dropoff-time" required></select>
                             </div>
                         </div>
                     </div>
 
-                    <button type="button" class="nomad-search-field nomad-search-btn" id="<?php echo esc_attr($unique_id); ?>_search_button">
-                        SEARCH
+                    <button type="submit" class="nomad-search-field nomad-search-btn" id="<?php echo esc_attr($unique_id); ?>_search_button" aria-label="Search vehicles">
+                        Search
                     </button>
                 </form>
             </div>
 
             <div class="nomad-options-row">
                 <label class="nomad-checkbox-option" for="<?php echo esc_attr($unique_id); ?>_different_location">
-                    <input type="checkbox" id="<?php echo esc_attr($unique_id); ?>_different_location" />
+                    <input type="checkbox" id="<?php echo esc_attr($unique_id); ?>_different_location" role="switch" aria-checked="false" />
                     <span>Drop car off at different location</span>
                 </label>
             </div>
