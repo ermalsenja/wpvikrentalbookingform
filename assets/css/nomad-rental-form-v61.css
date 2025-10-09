@@ -1,0 +1,224 @@
+.nomad-rental-wrapper {
+    font-family: "system-ui", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #1a1a1a;
+}
+
+.nomad-rental-card {
+    background: #ffb700;
+    border-radius: 10px;
+    padding: 12px;
+    box-shadow: rgba(0, 0, 0, 0.12) 0 6px 18px -6px;
+}
+
+.nomad-rental-alert {
+    margin-bottom: 16px;
+}
+
+.nomad-rental-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.nomad-field {
+    flex: 1 1 210px;
+    min-width: 180px;
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 12px 14px 10px;
+    position: relative;
+    transition: background-color 0.2s ease;
+}
+
+.nomad-field:hover {
+    background: #f8f8f8;
+}
+
+.nomad-field__label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+    color: #595959;
+}
+
+.nomad-field__input,
+.nomad-field__select {
+    width: 100%;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    background: transparent;
+    padding: 0;
+    color: #1a1a1a;
+}
+
+.nomad-field__input:focus,
+.nomad-field__select:focus {
+    outline: none;
+}
+
+.nomad-field__error {
+    margin-top: 6px;
+    font-size: 13px;
+    color: #d61f1f;
+}
+
+.nomad-field.is-error {
+    box-shadow: inset 0 0 0 2px rgba(214, 31, 31, 0.45);
+}
+
+.nomad-toggle-row {
+    display: flex;
+    justify-content: flex-start;
+    gap: 12px;
+    margin-top: 10px;
+    align-items: center;
+    font-size: 15px;
+    color: #111111;
+}
+
+.nomad-search-submit {
+    flex: 0 0 clamp(150px, 18vw, 200px);
+    background: #005ae0;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.18s ease, background 0.18s ease;
+    padding: 16px 12px;
+}
+
+.nomad-search-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.nomad-search-submit:focus-visible {
+    outline: 3px solid rgba(0, 90, 224, 0.35);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .nomad-field,
+    .nomad-search-submit {
+        transition: none;
+    }
+}
+
+.nomad-field-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    width: 100%;
+}
+
+.nomad-field-group .nomad-field {
+    flex: 1 1 240px;
+}
+
+.nomad-field--time {
+    flex: 0.6 1 180px;
+}
+
+.nomad-field--location {
+    min-width: 220px;
+}
+
+.nomad-field--dropoff[hidden] {
+    display: none !important;
+}
+
+.nomad-rental-wrapper[data-layout="paired-mobile"] .nomad-field-group--locations {
+    flex-wrap: wrap;
+}
+
+.nomad-rental-wrapper[data-layout="paired-mobile"] .nomad-field-group--locations .nomad-field {
+    flex: 1 1 calc(50% - 6px);
+}
+
+.nomad-rental-wrapper[data-layout="stacked-mobile"] .nomad-field-group--locations .nomad-field {
+    flex: 1 1 240px;
+}
+
+@media (max-width: 960px) {
+    .nomad-field--time {
+        flex-basis: 160px;
+    }
+}
+
+@media (max-width: 720px) {
+    .nomad-field {
+        min-width: 160px;
+    }
+
+    .nomad-search-submit {
+        flex-basis: 100%;
+    }
+
+    .nomad-rental-wrapper[data-layout="stacked-mobile"] .nomad-field-group--locations .nomad-field,
+    .nomad-rental-wrapper[data-layout="stacked-mobile"] .nomad-field-group--dates .nomad-field {
+        flex-basis: 100%;
+    }
+
+    .nomad-rental-wrapper[data-layout="paired-mobile"] .nomad-field-group--locations .nomad-field {
+        flex: 1 1 calc(50% - 6px);
+        min-width: 150px;
+    }
+
+    .nomad-rental-wrapper[data-layout="paired-mobile"] .nomad-field-group--dates .nomad-field {
+        flex: 1 1 calc(50% - 6px);
+    }
+}
+
+@media (max-width: 520px) {
+    .nomad-rental-wrapper[data-layout="paired-mobile"] .nomad-field-group--locations .nomad-field {
+        flex-basis: 100%;
+    }
+}
+
+.nomad-live-region {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+.nomad-loading-indicator {
+    margin-left: 10px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    border-top-color: #ffffff;
+    animation: nomad-spin 0.8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .nomad-loading-indicator {
+        animation: none;
+    }
+}
+
+@keyframes nomad-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
